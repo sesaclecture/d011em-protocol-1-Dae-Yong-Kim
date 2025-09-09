@@ -25,6 +25,11 @@ def blink_led() -> None:
     - 종료시 LED는 OFF 상태
     """
     # TODO: blink_led 구현
+    led = LED(18)
+    for _ in range(10):
+        led.toggle()
+    led.off()
+    return
 
     raise NotImplementedError
 
@@ -39,6 +44,19 @@ def check_to_input_button() -> None:
     - 버튼 입력을 10번 받았으면 종료.
     """
     # TODO: check_to_input_button 구현
+    btn = Button(18, pull_up=True)
+    cnt = 0
+    prev = btn.is_active
+    while cnt < 20:
+        cur = btn.is_active
+        if prev != cur:
+            if cur:
+                print("pressed")
+            else:
+                print("released")
+            cnt += 1
+            prev = cur
+    return
 
     raise NotImplementedError
 
@@ -54,7 +72,14 @@ def blink_led_through_button() -> None:
     """
     # TODO: blink_led_through_button 구현
     led = LED(12)
-    led.on()
+    btn = Button(13, pull_up=True)
+    for _ in range(10):
+        btn.wait_for_press()
+        led.blink(0.5)
+        btn.wait_for_release()
+        led.off()
+    # led.off()
+    return
 
     raise NotImplementedError
 
@@ -66,6 +91,13 @@ def transmit_msg() -> None:
     - 개행을 붙여 전송 (수신/테스트 편의)
     """
     # TODO: blink_led_through_button 구현
+    ser = Serial("/dev/ttyAMA3", baudrate=115200, timeout=1.0)
+
+    for i in range(10):
+        ser.write(f"Hello World! {i}\n".encode())
+        time.sleep(0.2)
+
+    return
 
     raise NotImplementedError
 
@@ -76,6 +108,20 @@ def receive_msg() -> None:
     - 'exit' (대소문자 무시) 라인을 수신하면 함수 종료
     """
     # TODO: blink_led_through_button 구현
+    ser = Serial("/dev/ttyAMA3", baudrate=115200, timeout=1.0)
+    # print(ser.readline().decode())
+    ret_str = ""
+
+    while True:
+        ret_c = ser.read().decode()
+        if ret_c != '\n':
+            ret_str += ret_c
+        else:
+            print(ret_str)
+            if ret_str.lower() == "exit":
+                break
+            ret_str = ""
+    return
 
     raise NotImplementedError
 
